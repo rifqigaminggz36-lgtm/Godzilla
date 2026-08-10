@@ -1,0 +1,1334 @@
+local AllowedID = 10958860134
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+
+local function SafetyCheck()
+    if LP.UserId ~= AllowedID then
+        LP:Kick("DYTON SECURITY: User Not Whitelisted. Access Revoked.")
+        return false
+    end
+    return true
+end
+
+if not SafetyCheck() then return end
+
+local servicesToVerify = {"MLModelDeliveryService", "PartyEmulatorService", "OmniRecommendationsService", "PlatformFriendsService"}
+for _, serviceName in ipairs(servicesToVerify) do
+    local success = pcall(function()
+        local service = game:GetService(serviceName)
+        if typeof(service) ~= "Instance" or not service:IsA(serviceName) or service.ClassName ~= serviceName or service.Parent ~= game then
+            error("detected by Dyton", 0)
+        end
+        local secondaryCheck = game:GetService(serviceName)
+        if service ~= secondaryCheck then error("detected by Dyton", 0) end
+    end)
+    if not success then error("detected by Dyton", 0) end
+end
+
+local friendCheck = pcall(function()
+    local pf = game:GetService("PlatformFriendsService")
+    local fs = game:GetService("FriendService")
+    if pf == fs then error("detected by Dyton", 0) end
+end)
+if not friendCheck then error("detected by Dyton", 0) end
+
+local integrityState = true
+local secureKey = "ULTRA_SECURITY_VALIDATION"
+
+local function verifyEnvironment()
+    local success, res = pcall(function()
+        local t = {}
+        table.freeze(t)
+        t.newKey = 1
+    end)
+    if success then return false end
+
+    local success2, res2 = pcall(function()
+        return string.dump(function() end)
+    end)
+    if success2 then return false end
+
+    local timeCheck = pcall(function()
+        local t1 = os.time()
+        local t2 = os.time()
+        if t2 < t1 then integrityState = false end
+    end)
+    if not timeCheck then return false end
+
+    local tableManipulation = pcall(function()
+        local frozen = table.freeze({A = 1})
+        local _, err = pcall(function() frozen.A = 2 end)
+        if not err then integrityState = false end
+    end)
+    if not tableManipulation then return false end
+
+    return true
+end
+
+local function performAdvancedStaticChecks()
+    if not verifyEnvironment() then return false end
+    local isDeepStackValid = true
+    local _, stackErr = pcall(function()
+        local function deepCheck(depth)
+            if depth > 0 then deepCheck(depth - 1) else error("deep_marker") end
+        end
+        deepCheck(10)
+    end)
+    if not stackErr or not string.find(stackErr, "deep_marker") then isDeepStackValid = false end
+    if not isDeepStackValid then return false end
+
+    if type(delay) ~= "function" or type(tick) ~= "function" then return false end
+    if math.floor(math.pi) ~= 3 or math.clamp(5, 1, 3) ~= 3 then return false end
+
+    return true
+end
+
+local function runAdvancedRealTimeMonitor()
+    while integrityState do
+        if not verifyEnvironment() then integrityState = false end
+
+        local closureCheck = pcall(function()
+            local f = function() end
+            if getfenv(f) ~= getfenv(0) then integrityState = false end
+        end)
+        if not closureCheck then integrityState = false end
+
+        local stringAdvancedCheck = pcall(function()
+            if string.reverse("ABC") ~= "CBA" or string.split("A,B", ",")[1] ~= "A" then integrityState = false end
+        end)
+        if not stringAdvancedCheck then integrityState = false end
+
+        local tableFindCheck = pcall(function()
+            local array = {"X", "Y"}
+            if table.find(array, "X") ~= 1 or table.find(array, "Z") ~= nil then integrityState = false end
+        end)
+        if not tableFindCheck then integrityState = false end
+
+        if not integrityState then
+            while true do
+                pcall(function() return coroutine.yield() end)
+            end
+        end
+        task.wait(0.2)
+    end
+end
+
+local isExecutionSafe, verificationResult = pcall(performAdvancedStaticChecks)
+if not isExecutionSafe or verificationResult ~= true then
+    integrityState = false
+    while true do
+        pcall(function() return coroutine.yield() end)
+    end
+else
+    task.spawn(runAdvancedRealTimeMonitor)
+end
+
+-- [[ RE-ENGINEERED KAIJU GODZILLA SYSTEM V7.5.0 - SHIN GODZILLA ATOMIC OVERDRIVE ]] --
+-- Engine Core: DYTON_txt (Eternatus Framework & Zero-Delay Bypass Engine)
+-- Heavy Motion Tuning: Josep Bart & Dyton Partner (Atomic Matrix Integration - FIXED)
+-- Visual Tuning: Shin Godzilla Gradient Flow (Black + Neon Purple Matrix - LAG REDUCED)
+-- Skill Feature: Quad Air-Launch Cruise Missile Core & Atomic Void Banisher System
+
+if _G.a then
+    for _, connection in pairs(_G.a) do
+        pcall(function() connection:Disconnect() end)
+    end
+    _G.a = nil
+end
+
+if game:GetService("Workspace"):FindFirstChild("AbyssAirWalkPlatform") then
+    game:GetService("Workspace"):FindFirstChild("AbyssAirWalkPlatform"):Destroy()
+end
+
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local RS = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+local TS = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+
+local OwnerName = LP.Name
+local petMode = false
+local noclip = false
+local IsInvisible = false
+local IsTransitioning = false
+local isReloading = false
+local isMinimized = false
+local AirWalkActive = false
+
+-- [[ ATOMIC SKILL CONFIGURATION ]] --
+local IsAtomicActive = false
+local AtomicBreathDuration = 9
+local AtomicTimer = 0
+
+-- [[ CONFIGURATION MATRIX - INDEPENDENT OFFSETS ]] --
+local Config = {
+    Idle = {
+        Offset = Vector3.new(-3, -6, 21),
+        Rotation = Vector3.new(180, 270, 15)
+    },
+    Walk = {
+        Offset = Vector3.new(30, -6, -8),
+        Rotation = Vector3.new(180, 180, 15)
+    },
+    Atomic = {
+        Offset = Vector3.new(23, -6, 160),
+        Rotation = Vector3.new(180, 545, 20)
+    }
+}
+
+-- [[ OVERCLOCKED CACHE & ASYNC BYPASS BUFFERS ]] --
+local PROP_CACHE = {}
+local CURRENT_CFRAMES = {}
+local TARGET_CFRAMES = {}
+local LAST_SEND_TIME = {}
+local COLOR_SENDING = {}
+local NETWORK_STATE = {}
+local lastColorUpdate = 0
+local colorIndex = 1
+local originalPos = nil
+local snapNextFrame = false
+local TOTAL_MAX_PROPS = 60
+
+-- [[ MISSILE TRACKING & ATOMIC BANISHER VARIABLES ]] --
+local MissileData = {
+    TargetAllActive = false,
+    {Id = 57, MirrorId = 8,  State = "Idle", StartTime = 0, LaunchDuration = 1.2, StartCF = CFrame.new(), TargetPlayer = nil, BaseOffset = Vector3.new(-5, 40, -5)},
+    {Id = 58, MirrorId = 9,  State = "Idle", StartTime = 0, LaunchDuration = 1.4, StartCF = CFrame.new(), TargetPlayer = nil, BaseOffset = Vector3.new(5, 45, -5)},
+    {Id = 59, MirrorId = 11, State = "Idle", StartTime = 0, LaunchDuration = 1.6, StartCF = CFrame.new(), TargetPlayer = nil, BaseOffset = Vector3.new(-5, 50, 5)},
+    {Id = 60, MirrorId = 12, State = "Idle", StartTime = 0, LaunchDuration = 1.8, StartCF = CFrame.new(), TargetPlayer = nil, BaseOffset = Vector3.new(5, 55, 5)}
+}
+
+-- [[ NETWORK BYPASS TUNING & ADAPTIVE SIGNAL SAFETY ]] --
+local BASE_TICK_RATE = 0.015
+local NETWORK_TICK_RATE = 0.015
+local estimatedPing = 0.03
+local lastPosition = Vector3.zero
+local MAX_CHOKE_TIMEOUT = 0.05
+
+-- [[ AIR WALK CONFIGURATION ]] --
+local TargetHeight = 60
+local CurrentGroundY = 0
+local SmoothHeight = 0
+
+-- [[ PALET WARNA SHIN GODZILLA OVERCLOCK - CLEAN RUPA ]] --
+local COLORS = {
+    ShinBlack       = Color3.fromRGB(5, 5, 5),
+    ShinGlowPurple  = Color3.fromRGB(30, 0, 60),
+    NeonPurpleBright = Color3.fromRGB(100, 0, 180),
+    MissileGlow     = Color3.fromRGB(130, 220, 255),
+    AtomicGlow      = Color3.fromRGB(30, 0, 60)
+}
+
+-- [[ DYNAMIC SHIN GODZILLA COLOR SYSTEM ]] --
+local function getSharkColor(t, id)
+    if IsAtomicActive then
+        local wave = math.sin((id / TOTAL_MAX_PROPS * math.pi * 4) - (t * 12)) * 0.5 + 0.5
+        return COLORS.NeonPurpleBright:Lerp(COLORS.AtomicGlow, wave)
+    end
+
+    for _, m in ipairs(MissileData) do
+        if m.Id == id and m.State ~= "Idle" then
+            return COLORS.MissileGlow
+        end
+    end
+
+    if id >= 7 and id <= 13 then
+        return COLORS.NeonPurpleBright
+    elseif id >= 57 then
+        return COLORS.NeonPurpleBright
+    end
+
+    local progress = (id - 1) / (TOTAL_MAX_PROPS - 1)
+    local wave = math.sin((progress * math.pi * 2) - (t * 5)) * 0.5 + 0.5
+    return COLORS.ShinBlack:Lerp(COLORS.ShinGlowPurple, wave)
+end
+
+-- Create Air Walk Platform
+local Platform = Instance.new("Part")
+Platform.Name = "AbyssAirWalkPlatform"
+Platform.Size = Vector3.new(25, 1, 25)
+Platform.Transparency = 1
+Platform.Anchored = true
+Platform.CanCollide = false
+Platform.Parent = game:GetService("Workspace")
+
+local function UpdateAndValidateRodanProps()
+    local targetFolder = workspace:FindFirstChild("WorkspaceCom") and workspace.WorkspaceCom:FindFirstChild("001_TrafficCones")
+    if not targetFolder then return false end
+
+    local targetPropName = "Prop" .. OwnerName
+    if OwnerName == "terasiremik" then targetPropName = "Propterasiremik" end
+
+    for id, storedProp in pairs(PROP_CACHE) do
+        if not storedProp or not storedProp.Parent then
+            PROP_CACHE[id] = nil
+            CURRENT_CFRAMES[id] = nil
+            TARGET_CFRAMES[id] = nil
+            LAST_SEND_TIME[id] = nil
+            COLOR_SENDING[id] = nil
+            NETWORK_STATE[id] = nil
+        end
+    end
+
+    local children = targetFolder:GetChildren()
+    table.sort(children, function(a, b) return a:GetDebugId() < b:GetDebugId() end)
+
+    for _, child in ipairs(children) do
+        if child.Name == targetPropName then
+            local alreadyRegistered = false
+            for _, storedProp in pairs(PROP_CACHE) do
+                if storedProp == child then alreadyRegistered = true break end
+            end
+
+            if not alreadyRegistered then
+                for id = 1, TOTAL_MAX_PROPS do
+                    if not PROP_CACHE[id] then
+                        PROP_CACHE[id] = child
+                        CURRENT_CFRAMES[id] = nil
+                        TARGET_CFRAMES[id] = nil
+                        LAST_SEND_TIME[id] = 0
+                        COLOR_SENDING[id] = false
+                        NETWORK_STATE[id] = false
+                        break
+                    end
+                end
+            end
+        end
+    end
+    return true
+end
+
+local function UpdateGroundY()
+    local char = LP.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+
+    local exclusionList = {char, Platform}
+    for _, propPart in pairs(PROP_CACHE) do
+        if propPart and propPart.Parent then
+            table.insert(exclusionList, propPart)
+        end
+    end
+    raycastParams.FilterDescendantsInstances = exclusionList
+
+    local startPosition = Vector3.new(root.Position.X, root.Position.Y + 50, root.Position.Z)
+    local raycastResult = game:GetService("Workspace"):Raycast(startPosition, Vector3.new(0, -2000, 0), raycastParams)
+
+    if raycastResult then
+        CurrentGroundY = raycastResult.Position.Y
+    end
+end
+
+local function getBombCount()
+    local count = 0
+    local bp = LP:FindFirstChild("Backpack")
+    local char = LP.Character
+    if bp then for _, item in pairs(bp:GetChildren()) do if item.Name == "Bomb" then count = count + 1 end end end
+    if char then for _, item in pairs(char:GetChildren()) do if item.Name == "Bomb" then count = count + 1 end end end
+    return count
+end
+
+local function getOff(base, target) return base:ToObjectSpace(target) end
+local baseRef = CFrame.new(-22.5595, 85.1412, 443.6309, 0.0333, -0.0396, -0.9987, -0.2914, -0.9562, 0.0282, -0.9559, 0.2903, -0.0434)
+
+-- [[ ASSET MATRIX POOL CORE - PRE-COMPUTED KAIJU STATES ]] --
+local AnimationPool = {
+    Idle = {
+        getOff(baseRef, CFrame.new(-18.794, 92.006, 417.763) * CFrame.Angles(math.rad(76.64), math.rad(-4.12), math.rad(-178.59))),
+        getOff(baseRef, CFrame.new(-17.744, 93.215, 419.519) * CFrame.Angles(math.rad(76.65), math.rad(-4.12), math.rad(-178.58))),
+        getOff(baseRef, CFrame.new(-20.026, 93.368, 419.363) * CFrame.Angles(math.rad(76.65), math.rad(-4.12), math.rad(-178.58))),
+        getOff(baseRef, CFrame.new(-18.760, 90.615, 418.302) * CFrame.Angles(math.rad(-103.12), math.rad(4.11), math.rad(-1.45))),
+        getOff(baseRef, CFrame.new(-17.838, 90.571, 420.099) * CFrame.Angles(math.rad(-103.12), math.rad(4.11), math.rad(-1.45))),
+        getOff(baseRef, CFrame.new(-19.858, 90.706, 419.736) * CFrame.Angles(math.rad(-103.12), math.rad(4.11), math.rad(-1.45))),
+        getOff(baseRef, CFrame.new(-19.569, 80.092, 435.054) * CFrame.Angles(math.rad(44.64), math.rad(-0.99), math.rad(-92.12))),
+        getOff(baseRef, CFrame.new(-25.695, 78.487, 436.622) * CFrame.Angles(math.rad(54.30), math.rad(-7.77), math.rad(-75.01))),
+        getOff(baseRef, CFrame.new(-12.267, 77.102, 435.602) * CFrame.Angles(math.rad(54.71), math.rad(9.04), math.rad(-113.14))),
+        getOff(baseRef, CFrame.new(-19.464, 56.306, 450.029) * CFrame.Angles(math.rad(51.57), math.rad(-1.24), math.rad(-91.99))),
+        getOff(baseRef, CFrame.new(-23.136, 66.433, 442.119) * CFrame.Angles(math.rad(54.30), math.rad(-7.77), math.rad(-75.01))),
+        getOff(baseRef, CFrame.new(-16.171, 65.868, 441.582) * CFrame.Angles(math.rad(54.71), math.rad(9.04), math.rad(-113.14))),
+        getOff(baseRef, CFrame.new(-19.970, 44.110, 466.557) * CFrame.Angles(math.rad(12.59), math.rad(0.28), math.rad(-92.31))),
+        getOff(baseRef, CFrame.new(-24.612, 75.068, 560.125) * CFrame.Angles(math.rad(107.72), math.rad(-1.27), math.rad(-0.62))),
+        getOff(baseRef, CFrame.new(-24.774, 73.961, 560.438) * CFrame.Angles(math.rad(-22.99), math.rad(-2.71), math.rad(-178.55))),
+        getOff(baseRef, CFrame.new(-27.954, 73.692, 554.602) * CFrame.Angles(math.rad(-6.18), math.rad(70.59), math.rad(2.38))),
+        getOff(baseRef, CFrame.new(-21.904, 73.796, 554.892) * CFrame.Angles(math.rad(-2.11), math.rad(-66.56), math.rad(2.00))),
+        getOff(baseRef, CFrame.new(-13.322, 30.981, 434.039) * CFrame.Angles(math.rad(176.39), math.rad(-0.09), math.rad(-179.64))),
+        getOff(baseRef, CFrame.new(-27.368, 31.069, 434.015) * CFrame.Angles(math.rad(176.39), math.rad(-0.09), math.rad(-179.64))),
+        getOff(baseRef, CFrame.new(-15.017, 78.490, 426.288) * CFrame.Angles(math.rad(55.29), math.rad(1.93), math.rad(-166.85))),
+        getOff(baseRef, CFrame.new(-22.840, 78.092, 425.661) * CFrame.Angles(math.rad(58.06), math.rad(-0.53), math.rad(-18.37))),
+        getOff(baseRef, CFrame.new(-21.656, 86.799, 422.573) * CFrame.Angles(math.rad(133.11), math.rad(-1.41), math.rad(-89.48))),
+        getOff(baseRef, CFrame.new(-21.803, 81.034, 429.429) * CFrame.Angles(math.rad(147.46), math.rad(-0.25), math.rad(-89.12))),
+        getOff(baseRef, CFrame.new(-19.068, 80.835, 426.542) * CFrame.Angles(math.rad(-32.27), math.rad(15.48), math.rad(89.08))),
+        getOff(baseRef, CFrame.new(-19.173, 80.823, 426.342) * CFrame.Angles(math.rad(147.26), math.rad(14.64), math.rad(-89.10))),
+        getOff(baseRef, CFrame.new(-27.755, 81.091, 429.733) * CFrame.Angles(math.rad(147.03), math.rad(26.30), math.rad(-89.02))),
+        getOff(baseRef, CFrame.new(-15.108, 82.546, 429.880) * CFrame.Angles(math.rad(147.73), math.rad(-16.61), math.rad(-89.10))),
+        getOff(baseRef, CFrame.new(-21.937, 70.777, 436.134) * CFrame.Angles(math.rad(147.46), math.rad(-0.25), math.rad(-89.12))),
+        getOff(baseRef, CFrame.new(-26.224, 72.655, 435.437) * CFrame.Angles(math.rad(146.87), math.rad(34.73), math.rad(-88.93))),
+        getOff(baseRef, CFrame.new(-16.567, 72.839, 437.143) * CFrame.Angles(math.rad(147.84), math.rad(-22.42), math.rad(-89.08))),
+        getOff(baseRef, CFrame.new(-5.604, 81.339, 427.147) * CFrame.Angles(math.rad(-43.26), math.rad(21.11), math.rad(129.09))),
+        getOff(baseRef, CFrame.new(-0.481, 71.521, 428.023) * CFrame.Angles(math.rad(-0.88), math.rad(40.71), math.rad(102.86))),
+        getOff(baseRef, CFrame.new(-32.295, 81.482, 425.952) * CFrame.Angles(math.rad(-37.21), math.rad(-26.78), math.rad(-130.36))),
+        getOff(baseRef, CFrame.new(-37.348, 71.869, 426.322) * CFrame.Angles(math.rad(-4.30), math.rad(-43.27), math.rad(-110.92))),
+        getOff(baseRef, CFrame.new(-22.033, 60.419, 442.527) * CFrame.Angles(math.rad(147.46), math.rad(-0.25), math.rad(-89.12))),
+        getOff(baseRef, CFrame.new(-24.889, 61.745, 442.803) * CFrame.Angles(math.rad(147.30), math.rad(11.24), math.rad(-89.12))),
+        getOff(baseRef, CFrame.new(-18.649, 62.062, 443.559) * CFrame.Angles(math.rad(147.70), math.rad(-13.61), math.rad(-89.09))),
+        getOff(baseRef, CFrame.new(-22.093, 50.630, 450.760) * CFrame.Angles(math.rad(128.62), math.rad(3.25), math.rad(-87.96))),
+        getOff(baseRef, CFrame.new(-22.465, 43.771, 461.893) * CFrame.Angles(math.rad(110.06), math.rad(2.82), math.rad(-88.64))),
+        getOff(baseRef, CFrame.new(-23.823, 40.786, 474.199) * CFrame.Angles(math.rad(96.51), math.rad(2.42), math.rad(-88.04))),
+        getOff(baseRef, CFrame.new(-23.494, 40.784, 486.887) * CFrame.Angles(math.rad(83.34), math.rad(1.92), math.rad(-87.51))),
+        getOff(baseRef, CFrame.new(-24.115, 43.481, 499.443) * CFrame.Angles(math.rad(71.44), math.rad(1.36), math.rad(-87.20))),
+        getOff(baseRef, CFrame.new(-24.406, 48.494, 511.234) * CFrame.Angles(math.rad(61.36), math.rad(0.86), math.rad(-86.99))),
+        getOff(baseRef, CFrame.new(-25.212, 55.432, 521.972) * CFrame.Angles(math.rad(53.67), math.rad(0.44), math.rad(-86.91))),
+        getOff(baseRef, CFrame.new(-25.824, 63.724, 531.723) * CFrame.Angles(math.rad(44.88), math.rad(-0.05), math.rad(-86.89))),
+        getOff(baseRef, CFrame.new(-26.427, 70.108, 542.002) * CFrame.Angles(math.rad(71.34), math.rad(1.37), math.rad(-87.19))),
+        getOff(baseRef, CFrame.new(-27.142, 73.161, 554.156) * CFrame.Angles(math.rad(80.63), math.rad(1.79), math.rad(-87.45))),
+        getOff(baseRef, CFrame.new(-24.245, 74.876, 555.399) * CFrame.Angles(math.rad(113.21), math.rad(1.41), math.rad(0.91))),
+        getOff(baseRef, CFrame.new(-13.797, 52.464, 441.568) * CFrame.Angles(math.rad(170.21), math.rad(21.26), math.rad(-89.04))),
+        getOff(baseRef, CFrame.new(-12.266, 52.500, 442.298) * CFrame.Angles(math.rad(-9.01), math.rad(25.27), math.rad(89.02))),
+        getOff(baseRef, CFrame.new(-15.887, 42.089, 444.356) * CFrame.Angles(math.rad(170.56), math.rad(0.13), math.rad(-89.12))),
+        getOff(baseRef, CFrame.new(-13.347, 30.959, 442.386) * CFrame.Angles(math.rad(-82.21), math.rad(-89.63), math.rad(-78.62))),
+        getOff(baseRef, CFrame.new(-26.728, 52.477, 440.478) * CFrame.Angles(math.rad(170.21), math.rad(21.26), math.rad(-89.04))),
+        getOff(baseRef, CFrame.new(-26.151, 52.481, 440.600) * CFrame.Angles(math.rad(-9.01), math.rad(25.27), math.rad(89.02))),
+        getOff(baseRef, CFrame.new(-24.258, 41.633, 444.161) * CFrame.Angles(math.rad(-9.51), math.rad(-3.82), math.rad(89.11))),
+        getOff(baseRef, CFrame.new(-27.389, 31.028, 442.069) * CFrame.Angles(math.rad(-82.21), math.rad(-89.63), math.rad(-78.62)))
+    },
+    Walk1 = {
+        getOff(baseRef, CFrame.new(-21.840, 91.528, 413.608) * CFrame.Angles(math.rad(93.20), math.rad(-14.96), math.rad(-85.91))),
+        getOff(baseRef, CFrame.new(-23.585, 92.815, 414.579) * CFrame.Angles(math.rad(93.17), math.rad(-14.94), math.rad(-85.90))),
+        getOff(baseRef, CFrame.new(-23.364, 92.904, 412.299) * CFrame.Angles(math.rad(93.17), math.rad(-14.94), math.rad(-85.90))),
+        getOff(baseRef, CFrame.new(-22.421, 90.155, 413.662) * CFrame.Angles(math.rad(-79.46), math.rad(64.82), math.rad(-99.31))),
+        getOff(baseRef, CFrame.new(-23.689, 89.920, 414.267) * CFrame.Angles(math.rad(-81.74), math.rad(57.25), math.rad(-97.31))),
+        getOff(baseRef, CFrame.new(-23.492, 90.158, 412.723) * CFrame.Angles(math.rad(-81.74), math.rad(57.25), math.rad(-97.31))),
+        getOff(baseRef, CFrame.new(-39.459, 81.162, 412.668) * CFrame.Angles(math.rad(91.59), math.rad(-47.03), math.rad(1.17))),
+        getOff(baseRef, CFrame.new(-40.913, 80.119, 406.544) * CFrame.Angles(math.rad(99.37), math.rad(-36.78), math.rad(22.75))),
+        getOff(baseRef, CFrame.new(-40.289, 79.247, 420.026) * CFrame.Angles(math.rad(78.33), math.rad(-36.77), math.rad(-28.05))),
+        getOff(baseRef, CFrame.new(-55.147, 58.013, 412.969) * CFrame.Angles(math.rad(91.38), math.rad(-40.12), math.rad(1.03))),
+        getOff(baseRef, CFrame.new(-46.840, 68.146, 409.258) * CFrame.Angles(math.rad(99.37), math.rad(-36.78), math.rad(22.75))),
+        getOff(baseRef, CFrame.new(-46.503, 69.232, 416.247) * CFrame.Angles(math.rad(78.33), math.rad(-36.77), math.rad(-28.05))),
+        getOff(baseRef, CFrame.new(-72.020, 46.881, 412.326) * CFrame.Angles(math.rad(94.89), math.rad(-79.07), math.rad(4.23))),
+        getOff(baseRef, CFrame.new(-155.866, 70.660, 446.128) * CFrame.Angles(math.rad(89.40), math.rad(15.98), math.rad(90.58))),
+        getOff(baseRef, CFrame.new(-155.665, 68.707, 445.957) * CFrame.Angles(math.rad(-101.15), math.rad(-64.92), math.rad(82.06))),
+        getOff(baseRef, CFrame.new(-153.804, 68.499, 442.532) * CFrame.Angles(math.rad(-4.29), math.rad(-20.70), math.rad(-6.09))),
+        getOff(baseRef, CFrame.new(-153.916, 68.745, 449.036) * CFrame.Angles(math.rad(-179.86), math.rad(-21.88), math.rad(-173.86))),
+        getOff(baseRef, CFrame.new(-35.677, 31.108, 420.768) * CFrame.Angles(math.rad(73.76), math.rad(84.46), math.rad(-74.82))),
+        getOff(baseRef, CFrame.new(-44.043, 30.971, 405.904) * CFrame.Angles(math.rad(73.76), math.rad(84.46), math.rad(-74.82))),
+        getOff(baseRef, CFrame.new(-30.868, 78.374, 417.494) * CFrame.Angles(math.rad(87.20), math.rad(-36.48), math.rad(-76.43))),
+        getOff(baseRef, CFrame.new(-30.048, 77.754, 409.703) * CFrame.Angles(math.rad(90.15), math.rad(-33.64), math.rad(73.80))),
+        getOff(baseRef, CFrame.new(-26.729, 86.393, 410.749) * CFrame.Angles(math.rad(89.07), math.rad(41.38), math.rad(1.26))),
+        getOff(baseRef, CFrame.new(-33.751, 80.833, 410.564) * CFrame.Angles(math.rad(86.75), math.rad(55.68), math.rad(3.18))),
+        getOff(baseRef, CFrame.new(-30.943, 80.620, 413.379) * CFrame.Angles(math.rad(-67.02), math.rad(-53.66), math.rad(18.34))),
+        getOff(baseRef, CFrame.new(-30.740, 80.599, 413.280) * CFrame.Angles(math.rad(61.96), math.rad(52.23), math.rad(23.34))),
+        getOff(baseRef, CFrame.new(-33.896, 80.744, 404.606) * CFrame.Angles(math.rad(46.32), math.rad(46.47), math.rad(35.22))),
+        getOff(baseRef, CFrame.new(-34.331, 82.532, 417.203) * CFrame.Angles(math.rad(114.81), math.rad(53.28), math.rad(-19.83))),
+        getOff(baseRef, CFrame.new(-40.758, 70.780, 410.508) * CFrame.Angles(math.rad(86.75), math.rad(55.68), math.rad(3.18))),
+        getOff(baseRef, CFrame.new(-39.893, 72.524, 406.195) * CFrame.Angles(math.rad(37.19), math.rad(41.23), math.rad(41.60))),
+        getOff(baseRef, CFrame.new(-41.845, 73.010, 415.794) * CFrame.Angles(math.rad(123.53), math.rad(50.99), math.rad(-26.76))),
+        getOff(baseRef, CFrame.new(-31.516, 83.354, 427.785) * CFrame.Angles(math.rad(-70.13), math.rad(-24.68), math.rad(38.27))),
+        getOff(baseRef, CFrame.new(-37.011, 75.587, 433.068) * CFrame.Angles(math.rad(-30.46), math.rad(-50.34), math.rad(78.63))),
+        getOff(baseRef, CFrame.new(-28.072, 80.432, 401.664) * CFrame.Angles(math.rad(-161.10), math.rad(-16.97), math.rad(76.39))),
+        getOff(baseRef, CFrame.new(-25.997, 68.828, 399.645) * CFrame.Angles(math.rad(124.44), math.rad(-58.12), math.rad(49.43))),
+        getOff(baseRef, CFrame.new(-47.459, 60.617, 410.501) * CFrame.Angles(math.rad(86.75), math.rad(55.68), math.rad(3.18))),
+        getOff(baseRef, CFrame.new(-47.619, 61.877, 407.605) * CFrame.Angles(math.rad(67.22), math.rad(53.45), math.rad(19.16))),
+        getOff(baseRef, CFrame.new(-48.529, 62.378, 413.813) * CFrame.Angles(math.rad(109.98), math.rad(54.21), math.rad(-15.93))),
+        getOff(baseRef, CFrame.new(-55.982, 51.079, 410.466) * CFrame.Angles(math.rad(83.32), math.rad(36.69), math.rad(6.36))),
+        getOff(baseRef, CFrame.new(-67.304, 44.546, 409.967) * CFrame.Angles(math.rad(85.04), math.rad(18.83), math.rad(-1.95))),
+        getOff(baseRef, CFrame.new(-79.799, 41.937, 409.894) * CFrame.Angles(math.rad(94.04), math.rad(4.71), math.rad(-5.69))),
+        getOff(baseRef, CFrame.new(-90.697, 41.782, 417.908) * CFrame.Angles(math.rad(-87.17), math.rad(6.63), math.rad(23.12))),
+        getOff(baseRef, CFrame.new(-101.270, 43.154, 423.403) * CFrame.Angles(math.rad(-87.02), math.rad(19.61), math.rad(34.73))),
+        getOff(baseRef, CFrame.new(-108.553, 46.973, 430.845) * CFrame.Angles(math.rad(-100.42), math.rad(30.96), math.rad(53.63))),
+        getOff(baseRef, CFrame.new(-116.044, 53.101, 439.618) * CFrame.Angles(math.rad(-101.79), math.rad(31.13), math.rad(44.01))),
+        getOff(baseRef, CFrame.new(-124.986, 60.200, 445.843) * CFrame.Angles(math.rad(-99.71), math.rad(27.16), math.rad(26.16))),
+        getOff(baseRef, CFrame.new(-136.169, 65.227, 449.465) * CFrame.Angles(math.rad(-99.06), math.rad(12.82), math.rad(10.00))),
+        getOff(baseRef, CFrame.new(-148.773, 67.153, 443.995) * CFrame.Angles(math.rad(86.97), math.rad(-11.15), math.rad(3.75))),
+        getOff(baseRef, CFrame.new(-151.467, 68.950, 446.472) * CFrame.Angles(math.rad(86.41), math.rad(21.41), math.rad(93.07))),
+        getOff(baseRef, CFrame.new(-45.873, 52.835, 418.955) * CFrame.Angles(math.rad(-55.88), math.rad(47.87), math.rad(130.36))),
+        getOff(baseRef, CFrame.new(-45.953, 52.916, 420.208) * CFrame.Angles(math.rad(61.14), math.rad(-52.25), math.rad(140.20))),
+        getOff(baseRef, CFrame.new(-44.631, 42.434, 417.823) * CFrame.Angles(math.rad(85.38), math.rad(65.77), math.rad(4.35))),
+        getOff(baseRef, CFrame.new(-44.535, 31.341, 420.389) * CFrame.Angles(math.rad(178.87), math.rad(1.46), math.rad(-174.66))),
+        getOff(baseRef, CFrame.new(-48.779, 52.540, 405.147) * CFrame.Angles(math.rad(28.86), math.rad(63.50), math.rad(59.07))),
+        getOff(baseRef, CFrame.new(-49.531, 52.607, 407.535) * CFrame.Angles(math.rad(-10.34), math.rad(-66.21), math.rad(76.36))),
+        getOff(baseRef, CFrame.new(-53.524, 41.903, 408.447) * CFrame.Angles(math.rad(-101.01), math.rad(-60.47), math.rad(-11.06))),
+        getOff(baseRef, CFrame.new(-52.617, 31.177, 405.515) * CFrame.Angles(math.rad(178.87), math.rad(1.46), math.rad(-174.66)))
+    },
+    Walk2 = {
+        getOff(baseRef, CFrame.new(-21.840, 91.528, 413.608) * CFrame.Angles(math.rad(93.20), math.rad(-14.96), math.rad(-85.91))),
+        getOff(baseRef, CFrame.new(-23.585, 92.815, 414.579) * CFrame.Angles(math.rad(93.17), math.rad(-14.94), math.rad(-85.90))),
+        getOff(baseRef, CFrame.new(-23.364, 92.904, 412.299) * CFrame.Angles(math.rad(93.17), math.rad(-14.94), math.rad(-85.90))),
+        getOff(baseRef, CFrame.new(-22.421, 90.155, 413.662) * CFrame.Angles(math.rad(-86.58), math.rad(18.34), math.rad(-94.15))),
+        getOff(baseRef, CFrame.new(-23.689, 89.920, 414.267) * CFrame.Angles(math.rad(-86.91), math.rad(14.05), math.rad(-94.07))),
+        getOff(baseRef, CFrame.new(-23.492, 90.158, 412.723) * CFrame.Angles(math.rad(-86.78), math.rad(15.70), math.rad(-94.10))),
+        getOff(baseRef, CFrame.new(-39.459, 79.764, 412.668) * CFrame.Angles(math.rad(91.59), math.rad(-47.03), math.rad(1.17))),
+        getOff(baseRef, CFrame.new(-40.913, 77.879, 406.544) * CFrame.Angles(math.rad(99.37), math.rad(-36.78), math.rad(22.75))),
+        getOff(baseRef, CFrame.new(-40.289, 78.009, 420.026) * CFrame.Angles(math.rad(78.33), math.rad(-36.77), math.rad(-28.05))),
+        getOff(baseRef, CFrame.new(-55.147, 55.689, 412.969) * CFrame.Angles(math.rad(91.38), math.rad(-40.12), math.rad(1.03))),
+        getOff(baseRef, CFrame.new(-46.840, 68.678, 409.258) * CFrame.Angles(math.rad(99.37), math.rad(-36.78), math.rad(22.75))),
+        getOff(baseRef, CFrame.new(-46.503, 67.297, 416.247) * CFrame.Angles(math.rad(78.33), math.rad(-36.77), math.rad(-28.05))),
+        getOff(baseRef, CFrame.new(-72.020, 46.233, 412.326) * CFrame.Angles(math.rad(94.89), math.rad(-79.07), math.rad(4.23))),
+        getOff(baseRef, CFrame.new(-161.373, 46.575, 380.999) * CFrame.Angles(math.rad(89.40), math.rad(15.98), math.rad(90.58))),
+        getOff(baseRef, CFrame.new(-161.579, 45.311, 380.668) * CFrame.Angles(math.rad(-101.15), math.rad(-64.92), math.rad(82.06))),
+        getOff(baseRef, CFrame.new(-156.154, 45.318, 378.259) * CFrame.Angles(math.rad(-4.29), math.rad(-20.70), math.rad(-6.09))),
+        getOff(baseRef, CFrame.new(-156.429, 45.152, 384.272) * CFrame.Angles(math.rad(-179.86), math.rad(-21.88), math.rad(-173.86))),
+        getOff(baseRef, CFrame.new(-42.918, 31.108, 420.722) * CFrame.Angles(math.rad(73.76), math.rad(84.46), math.rad(-74.82))),
+        getOff(baseRef, CFrame.new(-36.374, 30.971, 406.226) * CFrame.Angles(math.rad(73.76), math.rad(84.46), math.rad(-74.82))),
+        getOff(baseRef, CFrame.new(-30.868, 78.374, 417.494) * CFrame.Angles(math.rad(87.20), math.rad(-36.48), math.rad(-76.43))),
+        getOff(baseRef, CFrame.new(-30.048, 77.754, 409.703) * CFrame.Angles(math.rad(90.15), math.rad(-33.64), math.rad(73.80))),
+        getOff(baseRef, CFrame.new(-26.729, 86.393, 410.749) * CFrame.Angles(math.rad(89.07), math.rad(41.38), math.rad(1.26))),
+        getOff(baseRef, CFrame.new(-33.751, 80.833, 410.564) * CFrame.Angles(math.rad(86.75), math.rad(55.68), math.rad(3.18))),
+        getOff(baseRef, CFrame.new(-30.943, 80.620, 413.379) * CFrame.Angles(math.rad(-67.02), math.rad(-53.66), math.rad(18.34))),
+        getOff(baseRef, CFrame.new(-30.740, 80.599, 413.280) * CFrame.Angles(math.rad(61.96), math.rad(52.23), math.rad(23.34))),
+        getOff(baseRef, CFrame.new(-33.896, 80.744, 404.606) * CFrame.Angles(math.rad(46.32), math.rad(46.47), math.rad(35.22))),
+        getOff(baseRef, CFrame.new(-34.331, 82.532, 417.203) * CFrame.Angles(math.rad(114.81), math.rad(53.28), math.rad(-19.83))),
+        getOff(baseRef, CFrame.new(-40.758, 70.780, 410.508) * CFrame.Angles(math.rad(86.75), math.rad(55.68), math.rad(3.18))),
+        getOff(baseRef, CFrame.new(-39.893, 72.524, 406.195) * CFrame.Angles(math.rad(37.19), math.rad(41.23), math.rad(41.60))),
+        getOff(baseRef, CFrame.new(-41.845, 73.010, 415.794) * CFrame.Angles(math.rad(123.53), math.rad(50.99), math.rad(-26.76))),
+        getOff(baseRef, CFrame.new(-28.073, 83.354, 426.867) * CFrame.Angles(math.rad(-21.06), math.rad(-54.05), math.rad(103.29))),
+        getOff(baseRef, CFrame.new(-24.041, 74.394, 430.741) * CFrame.Angles(math.rad(33.16), math.rad(-44.00), math.rad(145.83))),
+        getOff(baseRef, CFrame.new(-31.974, 81.681, 398.381) * CFrame.Angles(math.rad(-114.05), math.rad(-42.42), math.rad(130.98))),
+        getOff(baseRef, CFrame.new(-34.419, 71.630, 393.933) * CFrame.Angles(math.rad(-175.22), math.rad(-65.77), math.rad(84.93))),
+        getOff(baseRef, CFrame.new(-47.459, 60.617, 410.501) * CFrame.Angles(math.rad(86.75), math.rad(55.68), math.rad(3.18))),
+        getOff(baseRef, CFrame.new(-47.619, 61.877, 407.605) * CFrame.Angles(math.rad(67.22), math.rad(53.45), math.rad(19.16))),
+        getOff(baseRef, CFrame.new(-48.529, 62.378, 413.813) * CFrame.Angles(math.rad(109.98), math.rad(54.21), math.rad(-15.93))),
+        getOff(baseRef, CFrame.new(-55.982, 51.079, 410.466) * CFrame.Angles(math.rad(83.32), math.rad(36.69), math.rad(6.36))),
+        getOff(baseRef, CFrame.new(-66.877, 44.958, 409.374) * CFrame.Angles(math.rad(91.11), math.rad(18.18), math.rad(5.96))),
+        getOff(baseRef, CFrame.new(-79.398, 41.937, 407.562) * CFrame.Angles(math.rad(89.23), math.rad(3.71), math.rad(11.27))),
+        getOff(baseRef, CFrame.new(-93.126, 41.671, 408.477) * CFrame.Angles(math.rad(-90.41), math.rad(-1.50), math.rad(-27.81))),
+        getOff(baseRef, CFrame.new(-104.223, 42.850, 399.858) * CFrame.Angles(math.rad(-79.64), math.rad(9.89), math.rad(-50.65))),
+        getOff(baseRef, CFrame.new(-112.639, 46.318, 391.461) * CFrame.Angles(math.rad(-72.86), math.rad(15.36), math.rad(-41.99))),
+        getOff(baseRef, CFrame.new(-122.444, 49.653, 385.381) * CFrame.Angles(math.rad(100.80), math.rad(-7.92), math.rad(-154.04))),
+        getOff(baseRef, CFrame.new(-132.270, 51.263, 383.173) * CFrame.Angles(math.rad(-84.34), math.rad(0.57), math.rad(-2.76))),
+        getOff(baseRef, CFrame.new(-143.736, 49.739, 383.156) * CFrame.Angles(math.rad(-77.92), math.rad(-11.25), math.rad(5.34))),
+        getOff(baseRef, CFrame.new(-155.368, 47.087, 378.295) * CFrame.Angles(math.rad(97.97), math.rad(18.68), math.rad(-0.25))),
+        getOff(baseRef, CFrame.new(-157.631, 46.712, 380.568) * CFrame.Angles(math.rad(86.41), math.rad(21.41), math.rad(93.07))),
+        getOff(baseRef, CFrame.new(-45.873, 52.835, 418.955) * CFrame.Angles(math.rad(5.06), math.rad(41.85), math.rad(79.21))),
+        getOff(baseRef, CFrame.new(-45.953, 52.916, 420.208) * CFrame.Angles(math.rad(-23.96), math.rad(-64.15), math.rad(63.99))),
+        getOff(baseRef, CFrame.new(-51.496, 41.778, 418.040) * CFrame.Angles(math.rad(86.53), math.rad(57.67), math.rad(3.34))),
+        getOff(baseRef, CFrame.new(-51.877, 31.341, 420.491) * CFrame.Angles(math.rad(178.87), math.rad(1.46), math.rad(-174.66))),
+        getOff(baseRef, CFrame.new(-44.416, 52.540, 406.208) * CFrame.Angles(math.rad(-37.67), math.rad(63.78), math.rad(119.96))),
+        getOff(baseRef, CFrame.new(-44.342, 52.188, 406.773) * CFrame.Angles(math.rad(40.33), math.rad(-62.28), math.rad(122.57))),
+        getOff(baseRef, CFrame.new(-44.689, 41.903, 408.175) * CFrame.Angles(math.rad(-101.01), math.rad(-60.47), math.rad(-11.06))),
+        getOff(baseRef, CFrame.new(-44.743, 31.177, 405.704) * CFrame.Angles(math.rad(178.87), math.rad(1.46), math.rad(-174.66)))
+    },
+    Atomic = {
+        getOff(baseRef, CFrame.new(137.729, 90.974, 415.478) * CFrame.Angles(math.rad(94.56), math.rad(-12.02), math.rad(-87.05))),
+        getOff(baseRef, CFrame.new(135.731, 92.131, 416.466) * CFrame.Angles(math.rad(94.56), math.rad(-12.00), math.rad(-87.05))),
+        getOff(baseRef, CFrame.new(135.909, 92.296, 414.186) * CFrame.Angles(math.rad(94.56), math.rad(-12.00), math.rad(-87.05))),
+        getOff(baseRef, CFrame.new(136.577, 89.560, 415.669) * CFrame.Angles(math.rad(-78.77), math.rad(68.28), math.rad(-97.84))),
+        getOff(baseRef, CFrame.new(134.817, 89.822, 416.748) * CFrame.Angles(math.rad(-81.07), math.rad(59.72), math.rad(-95.77))),
+        getOff(baseRef, CFrame.new(134.607, 90.041, 414.392) * CFrame.Angles(math.rad(-81.07), math.rad(59.72), math.rad(-95.77))),
+        getOff(baseRef, CFrame.new(145.728, 85.091, 415.835) * CFrame.Angles(math.rad(-88.99), math.rad(-57.59), math.rad(-88.96))),
+        getOff(baseRef, CFrame.new(159.399, 76.740, 415.428) * CFrame.Angles(math.rad(-90.71), math.rad(-61.24), math.rad(177.66))),
+        getOff(baseRef, CFrame.new(171.605, 69.915, 415.496) * CFrame.Angles(math.rad(-88.93), math.rad(-59.05), math.rad(-88.90))),
+        getOff(baseRef, CFrame.new(185.050, 62.005, 415.486) * CFrame.Angles(math.rad(-90.72), math.rad(-61.22), math.rad(177.66))),
+        getOff(baseRef, CFrame.new(198.793, 54.139, 415.275) * CFrame.Angles(math.rad(-88.93), math.rad(-59.05), math.rad(-88.90))),
+        getOff(baseRef, CFrame.new(214.140, 45.692, 415.232) * CFrame.Angles(math.rad(-90.72), math.rad(-61.22), math.rad(177.66))),
+        getOff(baseRef, CFrame.new(229.713, 36.327, 415.031) * CFrame.Angles(math.rad(-88.93), math.rad(-59.05), math.rad(-88.90))),
+        getOff(baseRef, CFrame.new(-13.341, 34.732, 407.630) * CFrame.Angles(math.rad(91.24), math.rad(3.06), math.rad(89.64))),
+        getOff(baseRef, CFrame.new(-13.331, 34.244, 407.962) * CFrame.Angles(math.rad(-92.34), math.rad(-4.24), math.rad(87.37))),
+        getOff(baseRef, CFrame.new(-7.307, 33.007, 403.075) * CFrame.Angles(math.rad(-1.52), math.rad(-19.97), math.rad(-2.85))),
+        getOff(baseRef, CFrame.new(-6.781, 33.529, 413.998) * CFrame.Angles(math.rad(-179.42), math.rad(-22.79), math.rad(-177.09))),
+        getOff(baseRef, CFrame.new(123.046, 29.409, 425.195) * CFrame.Angles(math.rad(7.34), math.rad(70.81), math.rad(-7.14))),
+        getOff(baseRef, CFrame.new(124.138, 29.894, 400.704) * CFrame.Angles(math.rad(173.53), math.rad(71.66), math.rad(-172.55))),
+        getOff(baseRef, CFrame.new(129.257, 77.249, 419.064) * CFrame.Angles(math.rad(88.32), math.rad(-33.45), math.rad(-77.36))),
+        getOff(baseRef, CFrame.new(129.980, 76.895, 411.246) * CFrame.Angles(math.rad(91.22), math.rad(-30.67), math.rad(72.70))),
+        getOff(baseRef, CFrame.new(132.863, 85.664, 412.497) * CFrame.Angles(math.rad(91.55), math.rad(44.38), math.rad(0.06))),
+        getOff(baseRef, CFrame.new(126.138, 79.749, 412.251) * CFrame.Angles(math.rad(89.63), math.rad(58.72), math.rad(1.72))),
+        getOff(baseRef, CFrame.new(128.997, 79.603, 415.018) * CFrame.Angles(math.rad(-62.35), math.rad(-55.99), math.rad(22.02))),
+        getOff(baseRef, CFrame.new(129.199, 79.596, 414.915) * CFrame.Angles(math.rad(62.80), math.rad(55.30), math.rad(24.36))),
+        getOff(baseRef, CFrame.new(125.899, 79.822, 406.296) * CFrame.Angles(math.rad(46.44), math.rad(49.26), math.rad(37.36))),
+        getOff(baseRef, CFrame.new(125.579, 81.225, 418.947) * CFrame.Angles(math.rad(119.47), math.rad(55.55), math.rad(-23.54))),
+        getOff(baseRef, CFrame.new(119.662, 69.346, 412.005) * CFrame.Angles(math.rad(89.63), math.rad(58.72), math.rad(1.72))),
+        getOff(baseRef, CFrame.new(120.365, 71.256, 407.732) * CFrame.Angles(math.rad(37.14), math.rad(43.75), math.rad(44.10))),
+        getOff(baseRef, CFrame.new(118.547, 71.365, 417.371) * CFrame.Angles(math.rad(128.36), math.rad(52.88), math.rad(-30.79))),
+        getOff(baseRef, CFrame.new(127.522, 83.925, 429.048) * CFrame.Angles(math.rad(-86.56), math.rad(-27.39), math.rad(44.44))),
+        getOff(baseRef, CFrame.new(122.697, 77.604, 434.877) * CFrame.Angles(math.rad(-46.26), math.rad(-47.27), math.rad(67.37))),
+        getOff(baseRef, CFrame.new(128.076, 81.974, 400.747) * CFrame.Angles(math.rad(-105.79), math.rad(-36.68), math.rad(123.90))),
+        getOff(baseRef, CFrame.new(124.680, 74.993, 394.300) * CFrame.Angles(math.rad(-152.85), math.rad(-48.25), math.rad(90.98))),
+        getOff(baseRef, CFrame.new(113.499, 58.849, 411.799) * CFrame.Angles(math.rad(89.63), math.rad(58.72), math.rad(1.72))),
+        getOff(baseRef, CFrame.new(113.226, 60.180, 408.945) * CFrame.Angles(math.rad(68.43), math.rad(56.57), math.rad(19.67))),
+        getOff(baseRef, CFrame.new(112.394, 60.456, 415.177) * CFrame.Angles(math.rad(114.46), math.rad(56.65), math.rad(-19.37))),
+        getOff(baseRef, CFrame.new(105.485, 48.880, 411.611) * CFrame.Angles(math.rad(85.44), math.rad(39.76), math.rad(5.60))),
+        getOff(baseRef, CFrame.new(94.510, 41.778, 411.089) * CFrame.Angles(math.rad(86.96), math.rad(21.27), math.rad(3.16))),
+        getOff(baseRef, CFrame.new(82.345, 37.723, 410.465) * CFrame.Angles(math.rad(87.28), math.rad(15.44), math.rad(3.02))),
+        getOff(baseRef, CFrame.new(69.959, 34.911, 409.880) * CFrame.Angles(math.rad(87.65), math.rad(8.49), math.rad(2.98))),
+        getOff(baseRef, CFrame.new(57.465, 33.542, 408.811) * CFrame.Angles(math.rad(88.03), math.rad(1.45), math.rad(2.92))),
+        getOff(baseRef, CFrame.new(44.977, 33.167, 408.197) * CFrame.Angles(math.rad(88.15), math.rad(-1.57), math.rad(2.92))),
+        getOff(baseRef, CFrame.new(32.478, 33.427, 407.490) * CFrame.Angles(math.rad(88.15), math.rad(-1.30), math.rad(2.93))),
+        getOff(baseRef, CFrame.new(19.843, 33.364, 407.045) * CFrame.Angles(math.rad(88.17), math.rad(-1.22), math.rad(2.93))),
+        getOff(baseRef, CFrame.new(7.356, 33.236, 406.450) * CFrame.Angles(math.rad(88.06), math.rad(0.16), math.rad(2.91))),
+        getOff(baseRef, CFrame.new(-4.405, 33.280, 405.937) * CFrame.Angles(math.rad(88.05), math.rad(0.90), math.rad(2.92))),
+        getOff(baseRef, CFrame.new(-8.430, 33.800, 408.334) * CFrame.Angles(math.rad(88.37), math.rad(24.45), math.rad(92.26))),
+        getOff(baseRef, CFrame.new(114.736, 50.806, 422.320) * CFrame.Angles(math.rad(7.29), math.rad(36.43), math.rad(79.82))),
+        getOff(baseRef, CFrame.new(113.793, 50.899, 421.540) * CFrame.Angles(math.rad(-16.08), math.rad(-64.25), math.rad(70.93))),
+        getOff(baseRef, CFrame.new(112.453, 40.436, 418.405) * CFrame.Angles(math.rad(43.99), math.rad(65.41), math.rad(44.65))),
+        getOff(baseRef, CFrame.new(114.040, 29.307, 422.183) * CFrame.Angles(math.rad(179.88), math.rad(1.41), math.rad(-177.58))),
+        getOff(baseRef, CFrame.new(115.774, 50.973, 407.099) * CFrame.Angles(math.rad(20.57), math.rad(66.56), math.rad(69.05))),
+        getOff(baseRef, CFrame.new(116.280, 51.032, 405.692) * CFrame.Angles(math.rad(-4.10), math.rad(-32.87), math.rad(80.28))),
+        getOff(baseRef, CFrame.new(113.604, 40.060, 408.491) * CFrame.Angles(math.rad(-39.10), math.rad(-64.51), math.rad(46.00))),
+        getOff(baseRef, CFrame.new(114.592, 29.586, 403.684) * CFrame.Angles(math.rad(-178.53), math.rad(-20.35), math.rad(-177.54)))
+    }
+}
+
+-- [[ MIRROR INDEX GENERATION FOR PROPS 57-60 SO STRUCTURE NEVER BREAKS ]] --
+for _, pool in pairs({AnimationPool.Idle, AnimationPool.Walk1, AnimationPool.Walk2, AnimationPool.Atomic}) do
+    pool[57] = pool[8]
+    pool[58] = pool[9]
+    pool[59] = pool[11]
+    pool[60] = pool[12]
+end
+
+-- [[ UI CONTEXT CREATION - UPGRADED MATRIX DESIGN ]] --
+local sg = Instance.new("ScreenGui", CoreGui)
+sg.Name = "Godzilla_Kaiju_Overclock_Hub"
+
+local main = Instance.new("Frame", sg)
+main.Size = UDim2.new(0, 220, 0, 440)
+main.Position = UDim2.new(0.05, 0, 0.15, 0)
+main.BackgroundColor3 = Color3.fromRGB(10, 24, 46)
+main.BorderSizePixel = 0
+main.ClipsDescendants = true
+
+local titleBar = Instance.new("Frame", main)
+titleBar.Size = UDim2.new(1, 0, 0, 30)
+titleBar.BackgroundColor3 = Color3.fromRGB(6, 15, 30)
+titleBar.BorderSizePixel = 0
+
+local titleLabel = Instance.new("TextLabel", titleBar)
+titleLabel.Size = UDim2.new(1, -40, 1, 0)
+titleLabel.Position = UDim2.new(0, 8, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Shin Godzilla Matrix V7.5.0"
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.Font = Enum.Font.SourceSansBold
+titleLabel.TextSize = 13
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local MinBtn = Instance.new("TextButton", titleBar)
+MinBtn.Size = UDim2.new(0, 22, 0, 22)
+MinBtn.Position = UDim2.new(1, -26, 0, 4)
+MinBtn.BackgroundColor3 = Color3.fromRGB(5, 10, 20)
+MinBtn.BorderSizePixel = 1
+MinBtn.BorderColor3 = Color3.fromRGB(6, 15, 30)
+MinBtn.Text = "â–²"
+MinBtn.TextColor3 = Color3.new(1, 1, 1)
+MinBtn.Font = Enum.Font.SourceSansBold
+MinBtn.TextSize = 12
+local btnCorner = Instance.new("UICorner", MinBtn)
+btnCorner.CornerRadius = UDim.new(0, 4)
+
+local contentContainer = Instance.new("Frame", main)
+contentContainer.Size = UDim2.new(1, 0, 1, -30)
+contentContainer.Position = UDim2.new(0, 0, 0, 30)
+contentContainer.BackgroundTransparency = 1
+contentContainer.ClipsDescendants = true
+
+local dragging, dragStart, startPos
+titleBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging, dragStart, startPos = true, input.Position, main.Position
+    end
+end)
+UIS.InputChanged:Connect(function(input)
+    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+        local delta = input.Position - dragStart
+        main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+UIS.InputEnded:Connect(function(input) if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = false end end)
+
+local function styleBtn(b)
+    b.BackgroundColor3, b.BorderSizePixel, b.BorderColor3 = Color3.fromRGB(12, 35, 64), 1, COLORS.ShinGlowPurple
+    b.TextColor3, b.Font, b.TextSize = Color3.new(0.85, 0.95, 1), Enum.Font.SourceSansBold, 11
+    b.MouseEnter:Connect(function() b.BorderColor3 = COLORS.NeonPurpleBright b.TextColor3 = Color3.new(1,1,1) end)
+    b.MouseLeave:Connect(function() b.BorderColor3 = COLORS.ShinGlowPurple b.TextColor3 = Color3.new(0.85,0.95,1) end)
+end
+
+local function createBtn(txt, pos, size, parent)
+    local b = Instance.new("TextButton", parent or contentContainer)
+    b.Text, b.Position, b.Size = txt, pos, size styleBtn(b)
+    return b
+end
+
+local b2Frame = Instance.new("Frame", contentContainer)
+b2Frame.Size = UDim2.new(1, -10, 0, 95)
+b2Frame.Position = UDim2.new(0, 5, 0, 5)
+b2Frame.BackgroundTransparency = 1
+
+local SummonBtn = createBtn("SUMMON SHIN KAIJU", UDim2.new(0,0,0,0), UDim2.new(1,0,0.3,0), b2Frame)
+local cBtn      = createBtn("Noclip: OFF", UDim2.new(0,0,0.35,0), UDim2.new(0.5,-2,0.3,0), b2Frame)
+local airWalkBtn = createBtn("Air Walk: OFF", UDim2.new(0.5,2,0.35,0), UDim2.new(0.5,-2,0.3,0), b2Frame)
+
+local AtomicBtn = createBtn("SKILL: ATOMIC BEAM", UDim2.new(0,0,0.7,0), UDim2.new(1,0,0.3,0), b2Frame)
+AtomicBtn.BackgroundColor3 = Color3.fromRGB(45, 10, 60)
+AtomicBtn.BorderColor3 = Color3.fromRGB(180, 0, 255)
+
+local line = Instance.new("Frame", contentContainer)
+line.Size = UDim2.new(1, -10, 0, 1)
+line.Position = UDim2.new(0, 5, 0, 105)
+line.BackgroundColor3 = COLORS.ShinGlowPurple
+line.BorderSizePixel = 0
+
+-- [[ MISSILE WEAPON GUI CONTROLS ]] --
+local missileFrame = Instance.new("Frame", contentContainer)
+missileFrame.Size = UDim2.new(1, -10, 0, 90)
+missileFrame.Position = UDim2.new(0, 5, 0, 110)
+missileFrame.BackgroundTransparency = 1
+
+local targetInput = Instance.new("TextBox", missileFrame)
+targetInput.Size = UDim2.new(1, 0, 0, 24)
+targetInput.Position = UDim2.new(0, 0, 0, 5)
+targetInput.BackgroundColor3 = Color3.fromRGB(5, 15, 30)
+targetInput.BorderColor3 = COLORS.ShinGlowPurple
+targetInput.PlaceholderText = "Ketik Nama Target & Enter..."
+targetInput.Text = ""
+targetInput.TextColor3 = Color3.new(1, 1, 1)
+targetInput.Font = Enum.Font.SourceSansBold
+targetInput.TextSize = 12
+
+local targetAllBtn = createBtn("CRUISE MISSILES: TARGET ALL (OFF)", UDim2.new(0, 0, 0, 34), UDim2.new(1, 0, 0, 24), missileFrame)
+targetAllBtn.BackgroundColor3 = Color3.fromRGB(10, 45, 10)
+
+local statusLabel = Instance.new("TextLabel", missileFrame)
+statusLabel.Size = UDim2.new(1, 0, 0, 16)
+statusLabel.Position = UDim2.new(0, 0, 0, 64)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "Missile Engine Status: READY"
+statusLabel.TextColor3 = Color3.fromRGB(0, 255, 150)
+statusLabel.Font = Enum.Font.SourceSansBold
+statusLabel.TextSize = 11
+
+local line2 = Instance.new("Frame", contentContainer)
+line2.Size = UDim2.new(1, -10, 0, 1)
+line2.Position = UDim2.new(0, 5, 0, 205)
+line2.BackgroundColor3 = COLORS.ShinGlowPurple
+line2.BorderSizePixel = 0
+
+local bombFrame = Instance.new("Frame", contentContainer)
+bombFrame.Size = UDim2.new(1, -10, 0, 165)
+bombFrame.Position = UDim2.new(0, 5, 0, 215)
+bombFrame.BackgroundTransparency = 1
+
+local Counter = Instance.new("TextLabel", bombFrame)
+Counter.Size = UDim2.new(1, 0, 0, 18)
+Counter.Position = UDim2.new(0, 0, 0, 0)
+Counter.Text = "BOMBS COUNTER: 0"
+Counter.TextColor3 = Color3.fromRGB(255, 255, 255)
+Counter.Font = Enum.Font.SourceSansBold
+Counter.TextSize = 12
+Counter.BackgroundTransparency = 1
+
+local bReload   = createBtn("SKILL TP + DUPE BOMB", UDim2.new(0, 0, 0, 22), UDim2.new(1, 0, 0, 24), bombFrame)
+local bEquip    = createBtn("EQUIP ALL BOMBS", UDim2.new(0, 0, 0, 50), UDim2.new(1, 0, 0, 24), bombFrame)
+local bBlast    = createBtn("PLACE ALL BOMBS", UDim2.new(0, 0, 0, 78), UDim2.new(1, 0, 0, 24), bombFrame)
+bBlast.BackgroundColor3 = Color3.fromRGB(15, 60, 110)
+
+local bDetonate = createBtn("DETONATE ALL BOMBS", UDim2.new(0, 0, 0, 106), UDim2.new(1, 0, 0, 24), bombFrame)
+bDetonate.BackgroundColor3 = Color3.fromRGB(10, 35, 70)
+
+local invBtn    = createBtn("INVISIBLE: OFF", UDim2.new(0, 0, 0, 134), UDim2.new(1, 0, 0, 24), bombFrame)
+
+local creditLabel = Instance.new("TextLabel", contentContainer)
+creditLabel.Size = UDim2.new(1, 0, 0, 15)
+creditLabel.Position = UDim2.new(0, 0, 1, -15)
+creditLabel.BackgroundTransparency = 1
+creditLabel.Text = "Engine: DYTON_txt"
+creditLabel.TextColor3 = COLORS.ShinGlowPurple
+creditLabel.Font = Enum.Font.Code
+creditLabel.TextSize = 9
+
+local VisibleParts = {}
+local function SetupCharacter()
+    local char = LP.Character or LP.CharacterAdded:Wait()
+    VisibleParts = {}
+    for _, d in pairs(char:GetDescendants()) do
+        if (d:IsA("BasePart") or d:IsA("Decal")) and d.Name ~= "HumanoidRootPart" then
+            table.insert(VisibleParts, d)
+        end
+    end
+end
+
+local function restoreNaturalCollision(char)
+    if not char then return end
+    for _, v in pairs(char:GetDescendants()) do
+        if v:IsA("BasePart") then
+            local name = v.Name:lower()
+            v.CanCollide = (name:find("torso") or name:find("root") or name:find("leg") or name:find("head")) and not noclip
+        end
+    end
+end
+
+local function ToggleInvis()
+    IsInvisible = not IsInvisible
+    invBtn.Text = IsInvisible and "INVISIBLE: ON" or "INVISIBLE: OFF"
+    invBtn.TextColor3 = IsInvisible and COLORS.ShinGlowPurple or Color3.new(0.8, 0.8, 0.8)
+
+    local targetTransparency = IsInvisible and 1 or 0
+    for _, part in pairs(VisibleParts) do
+        if part and part.Parent then pcall(function() part.Transparency = targetTransparency end) end
+    end
+end
+
+local function ActionToggleAirWalk()
+    local char = LP.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    AirWalkActive = not AirWalkActive
+    if AirWalkActive then
+        airWalkBtn.Text = "Air Walk: ON"
+        airWalkBtn.TextColor3 = COLORS.ShinGlowPurple
+        Platform.CanCollide = true
+        UpdateGroundY()
+        if root then
+            SmoothHeight = CurrentGroundY + TargetHeight
+            root.CFrame = CFrame.new(root.Position.X, SmoothHeight, root.Position.Z)
+        end
+    else
+        airWalkBtn.Text = "Air Walk: OFF"
+        airWalkBtn.TextColor3 = Color3.new(0.85, 0.8, 0.8)
+        Platform.CanCollide = false
+        Platform.Position = Vector3.new(0, -999, 0)
+    end
+end
+
+local function CleanUpMissiles()
+    for _, m in ipairs(MissileData) do
+        m.State = "Idle"
+        m.TargetPlayer = nil
+    end
+    statusLabel.Text = "Missile Engine Status: READY"
+    statusLabel.TextColor3 = Color3.fromRGB(0, 255, 150)
+end
+
+local function LaunchMissiles(targets)
+    if not petMode then statusLabel.Text = "ERROR: SUMMON KAIJU FIRST!" statusLabel.TextColor3 = Color3.fromRGB(255, 50, 50) return end
+    statusLabel.Text = "FIRING QUAD MISSILES..."
+    statusLabel.TextColor3 = Color3.fromRGB(255, 150, 0)
+
+    for i, m in ipairs(MissileData) do
+        local targetPlayer = targets[((i - 1) % #targets) + 1]
+        if targetPlayer then
+            m.TargetPlayer = targetPlayer
+            m.StartTime = tick()
+            m.State = "Launch"
+            if CURRENT_CFRAMES[m.Id] then
+                m.StartCF = CURRENT_CFRAMES[m.Id]
+            else
+                m.StartCF = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") and LP.Character.HumanoidRootPart.CFrame or CFrame.new()
+            end
+        end
+    end
+end
+
+-- [[ TRIGGER FUNCTION FOR ATOMIC MATRIX ]] --
+AtomicBtn.MouseButton1Click:Connect(function()
+    if not petMode then return end
+    if IsAtomicActive then return end
+
+    IsAtomicActive = true
+    snapNextFrame = true
+    AtomicTimer = tick()
+    AtomicBtn.Text = "BURNING ATOMIC..."
+    AtomicBtn.TextColor3 = Color3.new(1, 1, 1)
+    AtomicBtn.BackgroundColor3 = Color3.fromRGB(120, 0, 160)
+end)
+
+targetInput.FocusLost:Connect(function(enterPressed)
+    if enterPressed and targetInput.Text ~= "" then
+        local searchKey = targetInput.Text:lower()
+        local foundTarget = nil
+
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LP and (p.Name:lower():find(searchKey) or p.DisplayName:lower():find(searchKey)) then
+                foundTarget = p
+                break
+            end
+        end
+
+        if foundTarget then
+            targetInput.Text = foundTarget.DisplayName .. " (@" .. foundTarget.Name .. ")"
+            LaunchMissiles({foundTarget})
+        else
+            statusLabel.Text = "TARGET NOT FOUND!"
+            statusLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+        end
+    end
+end)
+
+targetAllBtn.MouseButton1Click:Connect(function()
+    if not petMode then
+        statusLabel.Text = "ERROR: SUMMON KAIJU FIRST!"
+        statusLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+        return
+    end
+
+    MissileData.TargetAllActive = not MissileData.TargetAllActive
+
+    if MissileData.TargetAllActive then
+        targetAllBtn.Text = "CRUISE MISSILES: TARGET ALL (ON)"
+        targetAllBtn.BackgroundColor3 = Color3.fromRGB(150, 10, 10)
+
+        local potentialTargets = {}
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LP and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                table.insert(potentialTargets, p)
+            end
+        end
+
+        if #potentialTargets == 0 then
+            statusLabel.Text = "NO TARGETS IN RADIUS!"
+            statusLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+            MissileData.TargetAllActive = false
+            targetAllBtn.Text = "CRUISE MISSILES: TARGET ALL (OFF)"
+            targetAllBtn.BackgroundColor3 = Color3.fromRGB(10, 45, 10)
+            return
+        end
+
+        local finalTargets = {}
+        for i = 1, 4 do
+            if #potentialTargets > 0 then
+                local randIndex = math.random(1, #potentialTargets)
+                table.insert(finalTargets, potentialTargets[randIndex])
+                if #potentialTargets > 4 then table.remove(potentialTargets, randIndex) end
+            end
+        end
+
+        LaunchMissiles(finalTargets)
+    else
+        targetAllBtn.Text = "CRUISE MISSILES: TARGET ALL (OFF)"
+        targetAllBtn.BackgroundColor3 = Color3.fromRGB(10, 45, 10)
+        CleanUpMissiles()
+    end
+end)
+
+SummonBtn.MouseButton1Click:Connect(function()
+    petMode = not petMode
+    if petMode then
+        SetupCharacter()
+        noclip, snapNextFrame = true, true
+        cBtn.Text, SummonBtn.TextColor3 = "Noclip: ON", COLORS.NeonPurpleBright
+        UpdateAndValidateRodanProps()
+
+        local char = LP.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            lastPosition = char.HumanoidRootPart.Position
+        end
+    else
+        if IsInvisible then ToggleInvis() end
+        if AirWalkActive then ActionToggleAirWalk() end
+        noclip = false
+        IsAtomicActive = false
+        AtomicBtn.Text = "SKILL: ATOMIC BEAM"
+        AtomicBtn.BackgroundColor3 = Color3.fromRGB(45, 10, 60)
+        cBtn.Text, SummonBtn.TextColor3 = "Noclip: OFF", Color3.new(0.8,0.8,0.8)
+        restoreNaturalCollision(LP.Character)
+        table.clear(CURRENT_CFRAMES)
+        table.clear(TARGET_CFRAMES)
+        table.clear(LAST_SEND_TIME)
+        table.clear(COLOR_SENDING)
+        table.clear(NETWORK_STATE)
+
+        MissileData.TargetAllActive = false
+        targetAllBtn.Text = "CRUISE MISSILES: TARGET ALL (OFF)"
+        targetAllBtn.BackgroundColor3 = Color3.fromRGB(10, 45, 10)
+        CleanUpMissiles()
+    end
+end)
+
+cBtn.MouseButton1Click:Connect(function() noclip = not noclip cBtn.Text = noclip and "Noclip: ON" or "Noclip: OFF" restoreNaturalCollision(LP.Character) end)
+airWalkBtn.MouseButton1Click:Connect(ActionToggleAirWalk)
+invBtn.MouseButton1Click:Connect(ToggleInvis)
+
+bReload.MouseButton1Click:Connect(function()
+    isReloading = not isReloading
+    local char = LP.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    local detectorPath = workspace.WorkspaceCom["001_CriminalWeapons"].GiveTools.Bomb.ClickDetector
+
+    if isReloading then
+        bReload.Text = "STOP & TP BACK"
+        bReload.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+        bReload.TextColor3 = Color3.new(1, 1, 1)
+        if root then originalPos = root.CFrame root.CFrame = detectorPath.Parent.CFrame end
+        task.spawn(function()
+            while isReloading do
+                pcall(function() fireclickdetector(detectorPath) end)
+                task.wait(0.05)
+            end
+        end)
+    else
+        bReload.Text = "SKILL TP + DUPE BOMB"
+        bReload.BackgroundColor3 = Color3.fromRGB(12, 35, 64)
+        bReload.TextColor3 = Color3.new(0.85,0.95,1)
+        if root and originalPos then root.CFrame = originalPos originalPos = nil end
+    end
+end)
+
+bEquip.MouseButton1Click:Connect(function() for _, v in pairs(LP.Backpack:GetChildren()) do if v.Name == "Bomb" then v.Parent = LP.Character end end end)
+
+bBlast.MouseButton1Click:Connect(function()
+    local char = LP.Character
+    if not char then return end
+    local bombs = {}
+    for _, v in pairs(LP.Backpack:GetChildren()) do if v.Name == "Bomb" then table.insert(bombs, v) end end
+    for _, v in pairs(char:GetChildren()) do if v.Name == "Bomb" then table.insert(bombs, v) end end
+    if #bombs == 0 then return end
+    for i, bomb in ipairs(bombs) do
+        task.spawn(function() pcall(function() bomb.Parent = char task.wait() bomb:Activate() end) end)
+        if i % 20 == 0 then RS.Heartbeat:Wait() end
+    end
+end)
+
+bDetonate.MouseButton1Click:Connect(function()
+    local args = { "Bomb" .. OwnerName }
+    pcall(function() game:GetService("ReplicatedStorage"):WaitForChild("RE"):WaitForChild("1Blo1wBomb1sServe1r"):FireServer(unpack(args)) end)
+end)
+
+MinBtn.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    local targetSize = isMinimized and UDim2.new(0, 220, 0, 30) or UDim2.new(0, 220, 0, 440)
+    MinBtn.Text = isMinimized and "â–¼" or "â–²"
+    TS:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = targetSize}):Play()
+    contentContainer.Visible = not isMinimized
+end)
+
+task.spawn(function() while true do Counter.Text = "BOMBS COUNTER: " .. getBombCount() task.wait(0.4) end end)
+
+local Connections = {}
+Connections[1] = UIS.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed then
+        if input.KeyCode == Enum.KeyCode.G then
+            ToggleInvis()
+        elseif input.KeyCode == Enum.KeyCode.J then
+            ActionToggleAirWalk()
+        end
+    end
+end)
+
+-- [[ LOOP UTAMA INTERPOLASI MATRIX & ADAPTIVE LERP ENGINE ]] --
+Connections[2] = RS.Heartbeat:Connect(function(dt)
+    local char = LP.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    local hum = char and char:FindFirstChild("Humanoid")
+
+    if IsInvisible and root and hum then
+        local OriginalCFrame = root.CFrame
+        local OriginalCameraOffset = hum.CameraOffset
+        local DownCFrame = OriginalCFrame * CFrame.new(0, -500000, 0)
+        root.CFrame = DownCFrame
+        hum.CameraOffset = DownCFrame:ToObjectSpace(CFrame.new(OriginalCFrame.Position)).Position
+        RS.RenderStepped:Wait()
+        root.CFrame = OriginalCFrame
+        hum.CameraOffset = OriginalCameraOffset
+    end
+
+    if petMode then
+        local t = tick()
+        if t % 0.5 < dt then UpdateAndValidateRodanProps() end
+
+        local totalRegisteredProps = TOTAL_MAX_PROPS
+
+        if root then
+            local VirtualRootCFrame = root.CFrame
+            local currentPos = VirtualRootCFrame.Position
+            local calculatedVelocity = (currentPos - lastPosition) / math.max(dt, 0.001)
+            lastPosition = currentPos
+
+            local moveSpeed = calculatedVelocity.Magnitude
+            local isWalking = moveSpeed > 1
+
+            -- [[ CHECK & HANDLE TIMER DURASI ATOMIC BEAM ]] --
+            if IsAtomicActive then
+                if t - AtomicTimer >= AtomicBreathDuration then
+                    IsAtomicActive = false
+                    snapNextFrame = true
+                    AtomicBtn.Text = "SKILL: ATOMIC BEAM"
+                    AtomicBtn.BackgroundColor3 = Color3.fromRGB(45, 10, 60)
+                    AtomicBtn.TextColor3 = Color3.new(0.85, 0.95, 1)
+                else
+                    local timeLeft = math.max(0, math.ceil(AtomicBreathDuration - (t - AtomicTimer)))
+                    AtomicBtn.Text = "ATOMIC BREATH = " .. timeLeft
+                end
+            end
+
+            -- [[ DETERMINASI ACTIVE CONFIG MATRIX ]] --
+            local activeConfig = Config.Idle
+            local lerpSpeed = 5.0
+
+            if IsAtomicActive then
+                activeConfig = Config.Atomic
+                lerpSpeed = 3.5
+            elseif isWalking then
+                activeConfig = Config.Walk
+                lerpSpeed = 4.2
+            end
+
+            local localLerpAlpha = math.clamp(1 - math.exp(-lerpSpeed * dt), 0, 1)
+
+            local walkAnimSpeed = 2.4
+            local rawSin = math.sin(t * walkAnimSpeed)
+            local walkWeight = math.clamp((rawSin * 1.4) + 0.5, 0, 1)
+
+            if estimatedPing > 0.15 then
+                NETWORK_TICK_RATE = math.clamp(estimatedPing * 0.5, BASE_TICK_RATE, 0.08)
+            else
+                NETWORK_TICK_RATE = BASE_TICK_RATE
+            end
+
+            local safePing = math.clamp(estimatedPing, 0.01, 0.2)
+            local predictedPosition = currentPos + (calculatedVelocity * safePing)
+
+            local baseTargetCF = CFrame.new(predictedPosition, predictedPosition + VirtualRootCFrame.LookVector)
+            local finalPos = baseTargetCF * CFrame.new(activeConfig.Offset.X, activeConfig.Offset.Y, activeConfig.Offset.Z)
+            local rotCF = CFrame.Angles(math.rad(activeConfig.Rotation.X), math.rad(activeConfig.Rotation.Y), math.rad(activeConfig.Rotation.Z))
+
+            if snapNextFrame then localLerpAlpha = 1 end
+
+            -- [[ SCAN JALUR BEAM DEBOUNCED BANISHER ENGINE ]] --
+            local scannedTarget = nil
+            if IsAtomicActive and (math.floor(t * 10) % 2 == 0) then -- DI-DEBOUNCE AGAR TIDAK SPAM OVERHEAD
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= LP and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                        local enemyRoot = player.Character.HumanoidRootPart
+                        for scanId = 11, 13 do
+                            local scannerProp = PROP_CACHE[scanId]
+                            if scannerProp and scannerProp.Parent then
+                                if (enemyRoot.Position - scannerProp.Position).Magnitude < 35 then
+                                    scannedTarget = player
+                                    break
+                                end
+                            end
+                        end
+                    end
+                    if scannedTarget then break end
+                end
+            end
+
+            -- CALCULATION INDEX ALL PROPS
+            for id = 1, totalRegisteredProps do
+                local prop = PROP_CACHE[id]
+                if prop and prop.Parent then
+                    local mixedOffset
+
+                    if IsAtomicActive then
+                        mixedOffset = AnimationPool.Atomic[id] or AnimationPool.Atomic[((id - 1) % #AnimationPool.Atomic) + 1]
+                    elseif isWalking then
+                        local offset1 = AnimationPool.Walk1[id] or AnimationPool.Walk1[((id - 1) % #AnimationPool.Walk1) + 1]
+                        local offset2 = AnimationPool.Walk2[id] or AnimationPool.Walk2[((id - 1) % #AnimationPool.Walk2) + 1]
+                        mixedOffset = offset1:Lerp(offset2, walkWeight)
+                    else
+                        mixedOffset = AnimationPool.Idle[id] or AnimationPool.Idle[((id - 1) % #AnimationPool.Idle) + 1]
+                    end
+
+                    -- FIXED TRANSITION MATRIX OFFSET COMPENSATOR
+                    local targetCF = finalPos * rotCF * mixedOffset
+                    TARGET_CFRAMES[id] = targetCF
+
+                    -- [[ LOGIKA GERAKAN RANDOM ATOMIC BREATH BANISHER (PROP 57-60) ]] --
+                    if IsAtomicActive and (id >= 57 and id <= 60) and scannedTarget and scannedTarget.Character then
+                        local enemyRoot = scannedTarget.Character:FindFirstChild("HumanoidRootPart") or scannedTarget.Character:FindFirstChild("Torso")
+                        local enemyHum = scannedTarget.Character:FindFirstChildOfClass("Humanoid")
+
+                        if enemyRoot and enemyHum then
+                            local targetSeated = false
+                            pcall(function()
+                                if enemyHum.SeatPart == prop or (enemyRoot.Position - prop.Position).Magnitude < 8 then
+                                    targetSeated = true
+                                end
+                            end)
+
+                            if targetSeated then
+                                enemyRoot.CFrame = CFrame.new(0, -9e9, 0)
+                                CURRENT_CFRAMES[id] = CFrame.new(0, -9e9, 0)
+                            else
+                                local randomOffset = Vector3.new(
+                                    math.random(-12, 12),
+                                    math.random(-12, 12),
+                                    math.random(-12, 12)
+                                )
+                                local randomRotation = CFrame.Angles(
+                                    math.rad(math.random(0, 360)),
+                                    math.rad(math.random(0, 360)),
+                                    math.rad(math.random(0, 360))
+                                )
+                                CURRENT_CFRAMES[id] = CFrame.new(enemyRoot.Position + randomOffset) * randomRotation
+                            end
+                        end
+                    else
+                        -- [[ MISSILE SEAT CONTROLLER ENGINE ]] --
+                        local managedMissile = nil
+                        for _, m in ipairs(MissileData) do if m.Id == id then managedMissile = m break end end
+
+                        if managedMissile and managedMissile.State ~= "Idle" then
+                            local elapsed = t - managedMissile.StartTime
+                            local targetPlr = managedMissile.TargetPlayer
+
+                            if managedMissile.State == "Void" then
+                                CURRENT_CFRAMES[id] = CFrame.new(0, -9e9, 0)
+                                if targetPlr and targetPlr.Character then
+                                    local enemyRoot = targetPlr.Character:FindFirstChild("HumanoidRootPart") or targetPlr.Character:FindFirstChild("Torso")
+                                    if enemyRoot then enemyRoot.CFrame = CFrame.new(0, -9e9, 0) end
+                                end
+
+                                if elapsed > 6.0 or not MissileData.TargetAllActive then
+                                    managedMissile.State = "Idle"
+                                    managedMissile.TargetPlayer = nil
+                                    if not MissileData.TargetAllActive then
+                                        statusLabel.Text = "Missile Engine Status: READY"
+                                        statusLabel.TextColor3 = Color3.fromRGB(0, 255, 150)
+                                    end
+                                end
+                            elseif targetPlr and targetPlr.Parent and Players:FindFirstChild(targetPlr.Name) and targetPlr.Character then
+                                local enemyRoot = targetPlr.Character:FindFirstChild("HumanoidRootPart") or targetPlr.Character:FindFirstChild("Torso")
+                                local enemyHum = targetPlr.Character:FindFirstChildOfClass("Humanoid")
+
+                                if enemyRoot and enemyHum and enemyHum.Health > 0 then
+                                    local isTrapped = false
+                                    pcall(function()
+                                        if enemyHum.SeatPart == prop or (enemyRoot.Position - prop.Position).Magnitude < 15 then
+                                            isTrapped = true
+                                        end
+                                    end)
+
+                                    if isTrapped then
+                                        managedMissile.State = "Void"
+                                        managedMissile.StartTime = t
+                                        enemyRoot.CFrame = CFrame.new(0, -9e9, 0)
+                                        CURRENT_CFRAMES[id] = CFrame.new(0, -9e9, 0)
+                                    elseif managedMissile.State == "Launch" then
+                                        local alpha = math.clamp(elapsed / managedMissile.LaunchDuration, 0, 1)
+                                        local launchHeight = managedMissile.StartCF.Position + Vector3.new(0, 120, 0) + managedMissile.BaseOffset
+                                        local currentLaunchPos = managedMissile.StartCF.Position:Lerp(launchHeight, alpha)
+                                        CURRENT_CFRAMES[id] = CFrame.new(currentLaunchPos, currentLaunchPos + Vector3.new(0,-5,0))
+
+                                        if alpha >= 1 then managedMissile.State = "Cruise" managedMissile.StartTime = t end
+                                    elseif managedMissile.State == "Cruise" then
+                                        local startCruisePos = CURRENT_CFRAMES[id] and CURRENT_CFRAMES[id].Position or managedMissile.StartCF.Position
+                                        local finalCruisePos = enemyRoot.Position
+                                        local currentCruisePos = startCruisePos:Lerp(finalCruisePos, 0.12)
+                                        CURRENT_CFRAMES[id] = CFrame.new(currentCruisePos, finalCruisePos)
+                                    end
+                                else
+                                    managedMissile.State = "Idle"
+                                    managedMissile.TargetPlayer = nil
+                                end
+                            else
+                                managedMissile.State = "Idle"
+                                managedMissile.TargetPlayer = nil
+                            end
+                        else
+                            if managedMissile then
+                                local mirrorCF = CURRENT_CFRAMES[managedMissile.MirrorId]
+                                CURRENT_CFRAMES[id] = mirrorCF or targetCF
+                            else
+                                if snapNextFrame or not CURRENT_CFRAMES[id] then
+                                    CURRENT_CFRAMES[id] = targetCF
+                                else
+                                    -- SMOOTH TRANSITION LERP ALPHA FOR BOTH STATES
+                                    local currentAlpha = (IsAtomicActive and localLerpAlpha * 0.8) or localLerpAlpha
+                                    CURRENT_CFRAMES[id] = CURRENT_CFRAMES[id]:Lerp(targetCF, currentAlpha)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+            if snapNextFrame then snapNextFrame = false end
+
+            local canUpdateColor = (t - lastColorUpdate > 0.04)
+
+            for id = 1, totalRegisteredProps do
+                local prop = PROP_CACHE[id]
+                if prop and CURRENT_CFRAMES[id] then
+                    if t - (LAST_SEND_TIME[id] or 0) >= NETWORK_TICK_RATE and not NETWORK_STATE[id] then
+                        local cfR = prop:FindFirstChild("SetCurrentCFrame")
+                        if cfR and cfR:IsA("RemoteFunction") then
+                            LAST_SEND_TIME[id] = t
+                            NETWORK_STATE[id] = true
+
+                            task.spawn(function()
+                                local startSend = os.clock()
+                                local completed = false
+
+                                task.spawn(function()
+                                    local success = pcall(function()
+                                        cfR:InvokeServer(CURRENT_CFRAMES[id])
+                                    end)
+                                    completed = true
+                                    NETWORK_STATE[id] = false
+
+                                    if success and id == 1 then
+                                        estimatedPing = (estimatedPing * 0.95) + ((os.clock() - startSend) * 0.05)
+                                    end
+                                end)
+
+                                task.delay(MAX_CHOKE_TIMEOUT, function()
+                                    if not completed then NETWORK_STATE[id] = false end
+                                end)
+                            end)
+                        end
+                    end
+
+                    if canUpdateColor and id == colorIndex and not COLOR_SENDING[id] then
+                        local crR = prop:FindFirstChild("ChangePropColor")
+                        if crR then
+                            COLOR_SENDING[id] = true
+                            task.spawn(function()
+                                local finishedColor = false
+                                task.spawn(function()
+                                    pcall(function()
+                                        crR:InvokeServer(getSharkColor(t, id))
+                                    end)
+                                    finishedColor = true
+                                    COLOR_SENDING[id] = false
+                                end)
+                                task.delay(0.1, function() if not finishedColor then COLOR_SENDING[id] = false end end)
+                            end)
+                        end
+                    end
+                end
+            end
+
+            if canUpdateColor then
+                colorIndex = (colorIndex % totalRegisteredProps) + 1
+                lastColorUpdate = t
+            end
+        end
+    end
+
+    if AirWalkActive and root then
+        UpdateGroundY()
+        local actualTarget = CurrentGroundY + TargetHeight
+        SmoothHeight = SmoothHeight + (actualTarget - SmoothHeight) * 0.15
+
+        Platform.Position = Vector3.new(root.Position.X, SmoothHeight - 3.5, root.Position.Z)
+
+        if math.abs(root.Position.Y - SmoothHeight) > 1 then
+            root.CFrame = CFrame.new(root.Position.X, SmoothHeight, root.Position.Z)
+        end
+    end
+end)
+
+Connections[3] = RS.RenderStepped:Connect(function()
+    local char = LP.Character
+    if noclip and char then
+        for _, v in pairs(char:GetDescendants()) do
+            if v:IsA("BasePart") then v.CanCollide = false end
+        end
+    end
+end)
+
+LP.CharacterAdded:Connect(function()
+    task.wait(1)
+    IsInvisible, IsTransitioning, isReloading, AirWalkActive, IsAtomicActive = false, false, false, false, false
+    Platform.CanCollide = false
+    Platform.Position = Vector3.new(0, -999, 0)
+    airWalkBtn.Text = "Air Walk: OFF"
+    airWalkBtn.TextColor3 = Color3.new(0.85, 0.8, 0.8)
+    AtomicBtn.Text = "SKILL: ATOMIC BEAM"
+    AtomicBtn.BackgroundColor3 = Color3.fromRGB(45, 10, 60)
+    SetupCharacter()
+end)
+
+SetupCharacter()
+_G.a = Connections
