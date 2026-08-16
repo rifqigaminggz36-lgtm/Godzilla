@@ -1,4 +1,4 @@
-local AllowedID = 10958860134
+local AllowedID = 10447263260
 local Players = game:GetService("Players")
 local LP = Players.LocalPlayer
 
